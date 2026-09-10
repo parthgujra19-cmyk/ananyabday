@@ -203,6 +203,21 @@
     margin-top:6px;
     letter-spacing:0.01em;
   }
+  .name-heart{
+    display:inline-block;
+    color:var(--accent-rose);
+    font-size:0.75em;
+    vertical-align:middle;
+    margin-left:0.12em;
+    text-shadow:0 0 14px rgba(255,122,144,0.6);
+    animation:heartbeat 1.4s ease-in-out infinite;
+  }
+  @keyframes heartbeat{
+    0%,100%{transform:scale(1);}
+    15%{transform:scale(1.25);}
+    30%{transform:scale(1);}
+    45%{transform:scale(1.18);}
+  }
   .sub{
     margin-top:16px;
     color:var(--muted);
@@ -449,7 +464,7 @@
   #music-indicator.show{display:block;}
 
   @media (prefers-reduced-motion: reduce){
-    .star,.bulb,.balloon,.heart,.cake-flame,.caret{animation:none !important;}
+    .star,.bulb,.balloon,.heart,.cake-flame,.caret,.name-heart{animation:none !important;}
   }
 
   /* ---------- Birthday cake ---------- */
@@ -537,7 +552,7 @@
     <!-- Scene 1: Hero -->
     <section class="scene active" id="scene-hero">
       <div class="eyebrow-name">Happy Birthday</div>
-      <div class="headline">Ananya</div>
+      <div class="headline">Ananya <span class="name-heart">❤</span></div>
       <p class="sub">a small, cinematic little world, put together just for you</p>
       <button class="glow-btn" data-next="scene-ready">Open Your Gift</button>
     </section>
