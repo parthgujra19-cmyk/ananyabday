@@ -345,6 +345,9 @@
   #letter-card{
     transition:filter 1.1s ease, opacity 1.1s ease, transform 1.1s ease;
   }
+  /* "Back to the surprise" only shows once the reveal has been seen */
+  #back-to-reveal-btn{display:none;}
+  #scene-final.reveal-seen #back-to-reveal-btn{display:inline-block;}
   #scene-final.revealing #letter-card{
     filter:blur(14px);
     opacity:0;
@@ -472,14 +475,21 @@
     opacity:0;
     text-align:center;
   }
-  .reveal-photo-wrap #open-gallery-btn{
+  .reveal-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+    align-items:center;
     opacity:0;
     margin-top:2px;
   }
+  .reveal-actions .glow-btn{margin-top:0;}
+  #read-again-btn{padding:12px 24px; font-size:0.88rem;}
   #scene-final.revealing .reveal-tag{
     animation:fadeUp 0.8s ease 1.15s forwards;
   }
-  #scene-final.revealing .reveal-photo-wrap #open-gallery-btn{
+  #scene-final.revealing .reveal-actions{
     animation:fadeUp 0.8s ease 1.5s forwards;
   }
   @keyframes fadeUp{
@@ -775,7 +785,7 @@
     #scene-final.revealing .reveal-word,
     #scene-final.revealing .reveal-photo,
     #scene-final.revealing .reveal-tag,
-    #scene-final.revealing .reveal-photo-wrap #open-gallery-btn{
+    #scene-final.revealing .reveal-actions{
       animation:none !important; opacity:1 !important; transform:none !important;
     }
     #scene-final.revealing .reveal-photo-wrap{animation:none !important;}
@@ -901,6 +911,9 @@
           <p>Today is all about celebrating you, your beautiful heart. Here's to leaving the past behind and enjoying every moment ahead. I love you!</p>
         </div>
         <div class="signature">yours, always</div>
+        <div style="text-align:center;">
+          <button class="glow-btn gold" id="back-to-reveal-btn">Back to the surprise &rarr;</button>
+        </div>
       </div>
 
       <!-- Cinematic "Sweet 16" reveal -->
@@ -911,7 +924,10 @@
             <img src="appear.jpeg" alt="Ananya">
           </div>
           <div class="reveal-tag">Happy Birthday, Ananya <span class="name-heart">❤</span></div>
-          <button class="glow-btn gold" id="open-gallery-btn">Our Memories</button>
+          <div class="reveal-actions">
+            <button class="glow-btn" id="read-again-btn">Read the letter again</button>
+            <button class="glow-btn gold" id="open-gallery-btn">Our Memories</button>
+          </div>
         </div>
         <div class="reveal-word reveal-right">16</div>
       </div>
@@ -1047,18 +1063,31 @@ function typewriteLetter(){
 }
 
 /* ============ Sweet 16 reveal ============ */
-let revealed = false;
-function triggerReveal(){
-  if(revealed) return;
-  revealed = true;
-  const finalScene = document.getElementById('scene-final');
-  finalScene.classList.add('revealing');
-  // celebratory confetti as the photo pops in
-  setTimeout(()=> burstConfetti(), 300);
-  setTimeout(()=> burstConfetti(), 1100);
-  // a little heart shower from the center for extra sparkle
-  setTimeout(()=> heartShower(window.innerWidth/2, window.innerHeight*0.45), 500);
+const finalScene = document.getElementById('scene-final');
+let revealHasFired = false;
+function triggerReveal(celebrate){
+  finalScene.classList.add('revealing','reveal-seen');
+  if(celebrate !== false){
+    // celebratory confetti as the photo pops in
+    setTimeout(()=> burstConfetti(), 300);
+    setTimeout(()=> burstConfetti(), 1100);
+    // a little heart shower from the center for extra sparkle
+    setTimeout(()=> heartShower(window.innerWidth/2, window.innerHeight*0.45), 500);
+  }
+  revealHasFired = true;
 }
+
+// go back to read the letter (un-blur it, hide the reveal)
+document.addEventListener('click', (e)=>{
+  if(e.target && e.target.id === 'read-again-btn'){
+    finalScene.classList.remove('revealing');
+    // scroll the letter into view on small screens
+    document.getElementById('letter-card').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  if(e.target && e.target.id === 'back-to-reveal-btn'){
+    triggerReveal(false); // no confetti spam on the return trip
+  }
+});
 
 document.querySelectorAll('[data-next]').forEach(btn=>{
   btn.addEventListener('click', ()=> showScene(btn.getAttribute('data-next')));
